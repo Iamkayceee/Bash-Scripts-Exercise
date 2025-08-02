@@ -1,0 +1,39 @@
+# Exercises
+
+1. create a script that asks for the user's name and age, stores them in variables and then prints a greeting including this information.
+
+2. write a script that takes two numbers as cmd-line arguments, stores them in variables and then performs and displays the results of addition, substraction, multip>
+
+3. write a script that uses cmd substitution to get the current user, current directory and current date/time and prints this information in a formatted manner.
+
+# Answers
+
+1. 
+#!/bin/bash
+read -p  "Enter username: " username
+
+read -p "Enter age: " age
+
+echo -e "\nwelcome to bash tutorial" $age "years old" $username
+
+2. 
+#!/bin/bash
+read -p "Enter dads age: " dads_age
+
+read -p "Enter moms age: " moms_age
+
+echo "The age diff btw both is" $((dads_age - moms_age)) "years"
+echo "Total sum of both age is" $((dads_age + moms_age)) "years"
+echo "The multiple of both age is" $((dads_age * moms_age)) "years"
+echo "The division of both age is" $((dads_age / moms_age)) "years"
+
+3.
+#!/bin/bash
+current_user=`whoami`
+echo "current user" $current_user
+
+current_directory=`pwd`
+echo "current directory" $current_directory
+
+current_date=`date`
+echo "current date/time" $current_date
