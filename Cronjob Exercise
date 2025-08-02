@@ -1,0 +1,110 @@
+## Exercises
+
+1. Create a cron job that runs a script at a random time each day within a specified time range (e.g., between 1 AM and 5 AM).
+
+2. Write a wrapper script that adds logging, error handling, and email notifications to an existing cron job.
+
+3. Implement a cron job that checks if a specific process is running, and if not, starts it. Ensure that multiple instances of the script don't run simultaneously.
+
+4. Create a cron job that performs a task on the last day of each month, regardless of how many days are in the month.
+
+5. Write a script that analyzes cron log entries and generates a report of job execution times and any errors encountered.
+
+# Answers
+
+1. 
+        0 2 * * * * /path/to/script.sh
+
+2. 
+#!/bin/bash
+
+LOG_FILE="/path/to/logfile.log"
+ERROR_LOG_FILE="/path/to/error_logfile.log"
+EMAIL_RECIPIENT="your_email@example.com"
+SCRIPT_TO_RUN="/path/to/yourscript.sh"
+
+echo "$(date) - cronjob started" >> $LOG_FILE
+
+{
+ $SCRIPT_TO_RUN
+
+if [ $? -eq 0 ]; then
+        echo "$(date) - script executed successfully" $LOG_FILE
+        echo "the cron job ran successfully" | mail -s "cron job success" $EMAIL_RECIPIENT
+else
+        echo "$(date) - script execution failed" >> $ERROR_LOGFILE
+        echo "the cron job failed" | mail -s "cron job failure" $EMAIL_RECIPIENT
+fi
+} >> $LOG_FILE 2>&1
+
+Note: Assuming your crontab is set up to run the script /path/to/your_script.sh you'll modify your cronjob to execute this wrapper script * * * * * /path/to/wrapper.>
+
+3. 
+#!/bin/bash
+
+PROCESS_NAME="your_process_name"
+PROCESS_CMD="/path/to/your_process"
+LOCK_FILE="/var/lock/check_process.lock"
+
+(
+ flock -n 9 || exit 1
+
+        if ! pgrep -x "$PROCESS_NAME" > /dev/null;
+then
+        echo "$(date) - process "$PROCESS_NAME" not found. starting it now.." $PROCESS_CMD &
+
+        if pgrep -x "$PROCESS_NAME" > /dev/null;
+then
+        echo "$(date) - process "$PROCESS_NAME" started successfully"
+else
+        echo "$(date) - process "$PROCESS_NAME is already running"
+fi
+) 9>$ LOCK-FILE
+
+4. 
+#!/bin/bash
+
+CURRENT_DATE=$(date + %d)
+DAYS_IN_MONTH=$(date +%d -d "$(date +% y-%m-01) + 1 month -1 day")
+
+        if [ "$CURRENT_DATE" -eq "$DATE_IN_MONTH" ];
+then
+        echo "$(date) - performing task on the last day of the month"
+##      path/to/your_script.sh
+else
+        echo "$(date) - not the last day of the month, skipping task"
+fi
+
+Note: 0 0 * * * /path/to/last_day.sh
+This crontab runs everyday at midnight the script inside will determine if its actually the last day of the month and will perform the task only if it is not.
+
+5. 
+#!/bin/bash
+
+CRON_LOG_FILE="/var/log/cron"
+REPORT_FILE="cron_job_report.txt"
+
+echo "cron job execution report" > "$REPORT_FILE"
+echo "=========================" >> $REPORT_FILE"
+echo "generated on: $(date)" >> "$REPORT_FILE"
+echo " " >> "$REPORT_FILE"
+
+echo "job execution times and errors: " >> "$REPORT_FILE"
+echo "______________________________" >> "$REPORT_FILE"
+
+grep i 'cron' "$CRON_LOG_FILE" | while read -r line; do
+TIMESTAMP=$(echo "$line" | awk '{print $1, $2, $3, $4}')
+JOB_NAME -$ (echo "$line" | grep -op '(?<=CMD=).*')
+
+        if echo "$line" | grep -iq 'error', 
+then
+        ERROR_MESSAGE=$(echo "$line" | grep -op '(?<=error:).*')
+        echo "[TIMESTAMP] - job: $JOB_NAME - executed successfully" >> "REPORT_FILE"
+fi
+done
+
+echo " " >> "$REPORT_FILE"
+echo "summary of cron job executing" >> "$REPORT_FILE"
+echo "____________________________" >> "$REPORT_FILE"
+echo "Report generated at: $(date)" >> "$REPORT_FILE"
+echo "cron job report saved to: $REPORT_FILE"
