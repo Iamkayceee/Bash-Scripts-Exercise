@@ -1,0 +1,44 @@
+Exercise
+
+1. Develop a script that checks for available updates, performs the update, and logs the results.
+
+Answer
+
+1.
+#!/bin/bash
+
+LOG_FILE="/var/log/system_update.log"
+DATE=$(date)
+
+check_and_update() {
+	echo "$DATE: checking for update" >> "$LOG_FILE"
+
+if sudo apt-get update >> "$LOG_FILE" 2>1; then
+	echo "$DATE: update check completed" >> "$LOG_FILE"
+else
+	echo "$DATE: Error occured during update check" >> "$LOG_FILE"
+	exit 1
+fi
+
+if sudo apt-get upgrade -y >> "$LOG_FILE" 2>&1; then
+	echo "$DATE: system upgrade completed successfully" >> "$LOG_FILE"
+else
+	echo "$DATE: error occured during upgrade" >> "$LOG_FILE"
+	exit 1
+fi
+}
+
+log_update_status() {
+
+echo "$DATE: Update proces finished successfully" >> "$LOG_FILE"
+echo ".........................................." >> "$LOG_FILE"
+}
+
+echo "$DATE: Starting system update process" >> "$LOG_FILE"
+
+Check_and_update
+log_update_status
+
+echo "update process complete. check the log at $LOG_FILE for details."
+ 
+	
