@@ -1,0 +1,35 @@
+## Exercises
+
+1. Create an alias that combines the `mkdir` and `cd` commands to create a directory and immediately change into it.
+
+2. Write a script that creates several useful aliases and adds them to your `.bashrc` file.
+
+3. Create an alias that simplifies a complex command you use frequently (e.g., a multi-step git operation or a system maintenance task).
+
+4. Implement an alias that enhances the output of a common command (e.g., adding color to `ls` output).
+
+5. Design an alias that includes a simple prompt for user input before executing a potentially dangerous command.
+
+# Answers
+
+1. alias project='mkdir project && cd project'
+
+2. 
+#!/bin/bash
+
+alias_list=(
+        "alias ll='ls -la'"
+        "alias c='clear'"
+)
+ for alias in "${alias_list[@]}"; do
+        echo "$alias" >> ~/.bashrc
+done
+
+source ~/.bashrc
+
+3. alias update='sudo apt update && sudo apt upgrade -y'
+
+4. alias ls='ls --colorauto'
+
+5. alias sudo_root='read -p "are sure you want to run sudo? type yes to confirm: confirm && [[ "$confirm =="yes" ]] && sudo su || echo "operation cancel"'  
+
