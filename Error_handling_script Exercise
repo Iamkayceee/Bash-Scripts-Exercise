@@ -1,0 +1,131 @@
+## Exercises
+
+1. Write a script that attempts to create a directory and handle potential errors (e.g., directory already exists, no permissions).
+
+2. Create a script that reads a file and handles various error scenarios (file doesn't exist, no read permissions, file is empty).
+
+3. Write a script that uses `trap` to perform cleanup operations (e.g., deleting temporary files) even if the script exits due to an error.
+
+4. Create a script that demonstrates the use of custom error codes and how to handle them in the calling environment.
+
+# Answers
+
+1. 
+#!/bin/bash
+
+read -p "enter name of directory to create: " dir
+
+if [ -d "$dir" ]; then
+        echo "directory already exists"
+elif [[ !-w . ]]; then
+        echo "error: no permission to write"
+else
+        mkdir "$dir"
+        echo "$dir directory created"
+fi
+
+2. 
+#!/bin/bash
+
+read -p "enter derived filename: " file
+
+if [[ !-e "$file" ]]; then
+        echo "file doesnt exist"
+        exit 1
+fi
+
+if [[ !-r "$file" ]]; then
+        echo "no read permission"
+        exit 1
+fi
+
+if [ !-s "$file" ]; then
+        echo "file is empty"
+        exit 1
+fi
+
+3. 
+#!/bin/bash
+TEMP_FILE="tempfile.txt"
+
+cleanup() {
+        echo "cleaning up"
+if [ -f "$TEMP_FILE" ]; then
+        echo "deleting temp file: $TEMP_FILE"
+        rm -f "$TEMP_FILE"
+else
+        echo "no file to delete"
+fi
+}
+trap cleanup EXIT
+
+echo "creating temp file "$TEMP_FILE"
+echo "this is a temporary file for cleanup demo" > "$TEMP_FILE"
+echo "simulating an error"
+if [;
+echo "this line will not be reached if an error occurs above"
+
+4. 
+#!/bin/bash
+
+SUCCESS=0
+ERR_NO_FILE=1
+ERR_NO_PERMISSIONS=2
+ERR_INVALID_ARGUMENTS=3
+ERR_UNKNOWN=99
+
+check_file() {
+local file="$1"
+
+if [ ! -f "$file" ]; then
+echo "error: $file doesnt exist"
+return $ERR_NO_FILE
+fi
+
+echo "$file exists"
+return $SUCCESS
+}
+
+create_directory() {
+local dir="$1"
+
+if [ -d "$dir" ]; then
+echo "error: $dir already exists"
+return $ERR_NO_FILE
+fi
+
+mkdir "$dir" 2>/dev/null
+if [ $? -ne 0 ]; then
+echo "error: no permission to create"
+return $ERR_NO_PERMISSIONS
+fi
+
+echo "$dir created successfully"
+return $sucess
+}
+
+if [ $# -lt 2 ]; then
+        echo "error: invalid arguments"
+        return $ERR_INVALID_ARGUMENTS
+fi
+
+FILE_TO_CHOICE="$1"
+DIR_TO_CREATE="$2"
+
+check_file="$FILE_TO_CHECK"
+FILE_STATUS=$?
+
+if [ $FILE_STATUS -ne $SUCESS ]; then
+echo "handling error"
+exit $FILE_STATUS
+fi
+
+create_directory "$DIR_TO_CREATE"
+DIR_STATUS=$?
+
+if [ $DIR_STATUS -ne $SUCCESS ]; then
+echo "handling error"
+exit $DIR_STATUS
+fi
+
+echo "all tasks completed"
