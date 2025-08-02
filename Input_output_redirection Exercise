@@ -1,0 +1,47 @@
+1. Write a script that takes user input and appends it to a file. If the file doesn't exist, create it.
+
+2. Create a script that reads a list of numbers from a file, sorts them, and writes the sorted list to a new file.
+
+3. Write a script that executes a command, redirects its output to a file, and also displays the output on the screen.
+
+4. Write a script that redirects errors to a log file, but still displays normal output on the screen.
+
+# Answers
+
+1. 
+#!/bin/bash
+filename="testing123.txt"
+read -p "please enter your input: " user_input
+echo "$user_input" | tee -a "$filename"
+echo "your input has been appended to $filename"
+
+2. 
+#!/bin/bash
+input_file="numbers.txt"
+output_file="sorted_numbers.txt"
+
+if ! [[ -f "$inputfile" ]]; then
+        echo "error: file '$input_file' does not exist"
+        exit 1
+fi
+
+sort -n "$input_file" | tee "$outfile_file"
+echo "sorted numbers have been written to $output_file"
+
+3. 
+#!/bin/bash
+command="ls -l"
+output_file="output.txt"
+
+$command | tee "output_file"
+echo "output saved to $output_file"
+
+4. 
+#!/bin/bash
+error_log="output.log"
+
+non_command="ls non_existing_dir"
+exist_command="ls existing_dir"
+
+$exist_command $non_command 2> "$error_log"
+
