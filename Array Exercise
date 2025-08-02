@@ -1,0 +1,81 @@
+## Exercises
+
+1. Write a script that creates an array of your favorite foods and then prints each item in the array on a new line.
+
+2. Create a script that takes command-line arguments and stores them in an array. Then, print the number of arguments and each argument's value.
+
+3. Write a function that takes an array as input and returns a new array with only the unique elements.
+
+4. Create a script that reads a file line by line into an array, then performs some operation on each line (e.g., converting to uppercase).
+
+5. Write a script that uses an associative array to store and retrieve key-value pairs (e.g., country names and their capitals).
+
+# Answers
+
+1. 
+#!/bin/bash
+favorite_foods=(pizza bread tacos)
+
+for $food in "${favorite_food[@]}"
+do
+        echo "$food"
+done
+
+2. 
+#!/bin/bash
+args=("$@")
+echo "number of arguments: ${#args[@]}"
+
+for i in "${!args[@]}"
+do
+        echo "argument $i is ${args[i]}"
+3. 
+#!/bin/bash
+unique_elements() {
+local arr=("@")
+
+unique_array=($printf '%s\n' "${arr[@]}" | sort -u))
+echo "${unique_array[@]}"
+}
+input_array=(1 1 2 2 3 4 4 5)
+result=$(unique_elements "${input_array[@]}")
+echo "unique elements: $result"
+
+4. 
+#!/bin/bash
+if [ $# -ne 1 ]; then
+echo "usage: $0 filename"
+exit 1
+fi
+mapfile -t lines < "$1"
+
+for i in "${!lines[@]}"; do
+        lines[i]=$(echo "${lines[i]}" | tr '[:lower]' '[:upper:]')
+done
+
+echo "converted lines to uppercase:"
+for line in "${lines[@]}"; do
+echo "$line"
+done
+
+5. 
+#!/bin/bash
+declare -A capitals
+
+capitals[USA]="washington"
+capitals[FRANCE]="paris"
+capitals[GERMANY]="berlin"
+capital[ITALY]="rome"
+
+get_capital() {
+        local country="$1"
+if [[ -n "${capitals[$country]}" ]]; then
+        echo "the capital off $country is ${capitals[$country]}"
+else
+        echo "country not found in the database"
+fi
+}
+        echo "available countries: ${'capitals[@]}"
+        read -p "enter a country name to get its capital: " country
+
+get_capital "$country"
