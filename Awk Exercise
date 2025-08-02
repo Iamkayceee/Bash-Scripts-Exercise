@@ -1,0 +1,30 @@
+## Exercises
+
+1. Write an `awk` command to print all lines from a file where the second field is greater than 50.
+
+2. Create a script that uses `awk` to calculate and print the sum and average of a column of numbers in a CSV file.
+
+3. Use `awk` to extract and print all email addresses from a text file, assuming they follow the pattern user@domain.com.
+
+4. Write an `awk` script that reads a log file and reports the number of occurrences of each unique IP address.
+
+# Answers
+
+1. 
+        awk '$2 > 50 { print $0 }' file.txt
+
+2. 
+        awk '{ sum += $1 } END { print "sum=",sum;print "avg=",sum/NR }' numbers.txt
+
+3. 
+        awk '{ for (i=1; i<=NF; i++) if ($i~/^[a-ZA-Z0-9._%+-]+@[a-ZA-Z0-9.-]+\.[a-ZA-Z]{2,}$/) print $i }' filename.txt
+
+4. 
+#!/bin/bash
+if [ $# -ne 1 ]; then
+        echo "usage: $0 <logfile>"
+        exit 1
+fi
+log_file=$1
+
+        awk '{print $1}' "{log_file" | sort | uniq -c | sort -nr 
