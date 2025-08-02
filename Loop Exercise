@@ -1,0 +1,50 @@
+## Exercises
+
+1. Write a script that uses a for loop to print the multiplication table for a given number (input by the user).
+
+2. Create a script that uses a while loop to simulate a simple guessing game. Generate a random number between 1 and 10, and let the user guess until they get it rig>
+
+3. Write a script that uses a for loop to iterate through all the files in the current directory and print their names and sizes.
+
+4. Write a script that uses nested for loops to create a simple multiplication table for numbers 1 through 5.
+
+# Answers
+
+1.
+#!/bin/bash
+read -p "enter a number: " num
+
+for i in {1..10}
+do
+        echo "$(($num * i))"
+done
+
+2.
+#!/bin/bash
+while read -p "guess a number: " num
+do
+        if [ $num -eq 5 ];
+then
+        echo "you guessed right"
+        break
+fi
+        echo "incorrect, guess again"
+
+done
+
+3. 
+#!/bin/bash
+for file in *.sh
+do
+        echo "$(ls -l $file)"
+done
+
+4. 
+#!/bin/bash
+for num in {1..5}
+do
+        for i in {1..10}
+        do
+                echo "$(($num * i))"
+        done
+done
