@@ -1,0 +1,19 @@
+## Exercises
+
+1. Write a regex pattern to match and extract all phone numbers in a text file, assuming they are in the format (xxx) xxx-xxxx.
+
+2. Write a regex pattern to validate a password that must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long.
+
+3. Use `grep` with a regex pattern to find all lines in a log file that contain an IP address and a timestamp in the format [DD/Mon/YYYY:HH:MM:SS].
+
+# Answers
+
+1. for (xxx) xxx-xxxx
+  \(\d{3}\) \d{3}-\d{4}
+
+2. for xxxxxxxxxxx
+  \d{11}
+
+3. ^(?=.*[a-z])(?=.*[A-Z](?=.*\d).{8,}$
+
+4. grep -E '^([0-9]{1,3}\.){3}[0-9]{1,3}.*\[\d{2}/[A-Za-Z]{3}/\d{4}:\d{2}:\d{2}:\d{2}:\{2}:\d{2}\]' logfile.log
