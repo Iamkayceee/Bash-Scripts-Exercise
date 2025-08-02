@@ -1,0 +1,64 @@
+## Exercises
+
+1. Create a function that takes a filename as an argument and prints the number of lines, words, and characters in the file. Use this function to analyze multiple fi>
+
+2. Write a script with a function that generates a random password. The function should accept the password length as an argument and use a mix of uppercase, lowerca>
+
+# Answers
+
+1. 
+#!/bin/bash
+analyze_func() {
+        local filename="$1"
+
+if [ -f "$filename" ];
+then
+        local num_lines=$(wc -l < "$filename")
+        local num_words=$(wc -w < "$filename")
+        local num_characters=$(wc -c < "$filename")
+
+        echo "Analysis of $filename:"
+        echo "number of lines: $num_lines"
+        echo "number of words: $num_words"
+        echo "number of character: $num_character"
+else
+        echo "error: the file '$filename' was not found"
+fi
+}
+
+file_list="file1.txt file2.txt file3.txt"
+
+for file in $file_list; do
+        analyze_func "$file"
+done
+
+2.
+#!/bin/bash
+general_password() {
+        local length="$1"
+
+if ! [[ $length =~ ^[0-9]+$ ]] || [[ "$length" -lt 1 ]]; then
+        echo "error: length must be positive integer"
+        return 1
+fi
+
+local lower="abcdefghijklmnopqrstuvwxyz"
+local upper="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+local numbers="0123456789"
+local specials="!@#$%^&*()_+-=[]{};:,.<>?/|"
+
+local all_chars="$lower$upper$numbers$specials"
+
+local password=" "
+for ((i=0; i<length; i++)); do
+        password+=${all_chars:RANDOM%${#all_chars}:1}
+done
+        echo "$password"
+}
+
+if [ $# -eq 0 ]; then
+        echo "usage: $0 <password_length>"
+        exit 1
+fi
+
+generate_password "$1"
