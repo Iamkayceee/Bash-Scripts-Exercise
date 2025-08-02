@@ -1,0 +1,69 @@
+# Exercises
+
+1. Write a script that takes a number as input and tells if it's positive, negative, or zero.
+
+2. Create a script that checks if a file exists. If it does, print its contents; if not, create it with some default text.
+
+3. Write a script that compares two numbers provided as command-line arguments and prints whether the first number is greater than, less than, or equal to the second>
+
+4. Create a script that checks if the user running it has write permission for a specified file. Print an appropriate message based on the result.
+
+5. Write a script that asks for a user's age and name. If the user is 18 or older and their name is "Admin", print "Access granted". Otherwise, print "Access denied".
+
+# Answers
+
+1. 
+#!/bin/bash
+read -p "enter a number: " num
+
+if [ $num -lt 0 ]; then
+        echo "negative"
+elif [ $num -eq 0 ]; then
+        echo "zero"
+elif [ $num gt 0 ]; then
+        echo "positive"
+else
+        echo "i dont understand"
+fi
+
+2. 
+#!/bin/bash
+if [ -f "example.txt" ]; then
+        echo "example.txt exists"
+        cat example.txt
+else
+        echo "default text" > example.txt
+fi
+
+3. 
+#!/bin/bash
+read -p "enter first number: " num1
+
+read -p "enter second number: " num2
+
+if [ $num1 gt $num2 ]; then
+        echo "first number greater that second number"
+elif [ $num1 -lt $num2 ]; then
+        echo "first number less than second number"
+else
+        echo "first number equal to second number"
+fi
+
+4. 
+#!/bin/bash
+if [ -w "example.txt" ]; then
+        echo "user has permission"
+else
+        echo "user has no permission"
+fi
+
+5. 
+#!/bin/bash
+read -p "enter name: " name
+read -p "enter age: " age
+
+if [ $age -ge 18 ] && [ $name="Admin" ]; then
+        echo "Access granted"
+else
+        echo "Access denied"
+fi
