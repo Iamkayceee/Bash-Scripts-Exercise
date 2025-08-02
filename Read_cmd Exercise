@@ -1,0 +1,32 @@
+Exercise
+
+1. Create an interactive script that allows the user to manage a simple contact list (add, view, delete contacts).
+
+Answer
+
+1.
+#!/binbash
+
+while true; do
+	echo "1. add contact"
+	echo "2. view contact"
+	echo "3. delete contact"
+	echo "4. exit"
+	read -p "select an option: " choice
+
+case $choice in
+	1) read -p "enter name & number: " name num
+	echo  "$name" "$num" >> contact_list.txt
+	echo "contact added";;
+
+	2) echo "viewing contact list"
+	cat $contact_list;;
+
+	3) echo "deleting contact"
+	rm $contact_list;;
+	
+	4) echo "exiting..."; exit 0;;
+
+	*) echo "invalid option";;
+	esac
+done    
