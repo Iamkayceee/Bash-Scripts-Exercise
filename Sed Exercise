@@ -1,0 +1,27 @@
+## Exercises
+
+1. Write a `sed` command to replace all occurrences of "color" with "colour" in a file, but only for whole words (not parts of other words).
+
+2. Use `sed` to extract all phone numbers from a file, assuming they are in the format (xxxx) xxx-xxxx.
+
+3. Create a script that uses `sed` to comment out all lines in a configuration file that start with a specific word (e.g., "DEBUG").
+
+# Answers
+
+1. 
+        sed 's/\<color\>/color/g' file.txt
+
+2. 
+        sed -n 's/.*(/([0-9]\{4\}\)) \([0-9]\{3\}\)-\([0-9]\{4\}*/\1\2-\3/p' filename
+
+3. 
+#!/bin/bash
+if [ "$#" -ne 2 ]; then
+        echo "usage: $0 filename word"
+        exit 1
+fi
+FILENAME="$1"
+WORD="$2"
+
+        sed -i "s/^$WORD/#[&]/" "$FILENAME"
+        echo "commented out lines starting with '$WORD' in '$FILENAME'" 
