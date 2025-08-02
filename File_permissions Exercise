@@ -1,0 +1,65 @@
+## Exercises
+
+1. Write a script that checks if a file is executable. If not, make it executable and print a message.
+
+2. Create a script that changes the permissions of all `.txt` files in a directory to read-only for all users.
+
+3. Write a script that takes a filename as an argument and prints out its permissions in both symbolic and numeric format.
+
+4. Create a script that sets the setuid bit on a file if it's owned by root and is executable.
+
+5. Write a script that changes the ownership of all files in a directory to the current user, but only if the current user has write permission on the directory.
+
+# Answers
+
+1. 
+#!/bin/bash
+file="$1"
+if [ -x "$file" ]; then
+        echo "$file is already executable"
+else
+        chmod +x "$file"
+        echo "$file was not executable, made it executable"
+fi
+
+2. 
+#!/bin/bash
+find . -name "*.txt" -type f -exec chmod 444 {} +
+echo "all .txt files have been made read-only"
+
+3. 
+#!/bin/bash
+file="$1"
+if [[ ! -e "$file" ]]; then
+        echo "error: file $file does not exist"
+        exit 1
+fi
+        symbolic_prems=$(stat -c "%A" "$file") #$(ls -l "$file" | awk '{print $}' | cut -c 2-)
+        numeric_prems=$(stat -c "%a" "$file")
+
+        echo "symbolic permissions: $symbolic_prems"
+        echo "numeric permissions: $numeric_prems"
+
+4. 
+#!/bin/bash
+file="$1"
+
+if [[ -e "$file" && -x "$file" && $(stat -c "%u" "$file") == "root" ]]; then
+        chmod u+s "$file"
+        echo "setuid bit set on $file"
+else
+        echo "file $file is not owned by root or is not executable"
+fi
+
+5. 
+#!/bin/bash
+user=$(whoami)
+DIR="$1"
+
+        if [ ! -w "$DIR" ]; then
+        echo "error: you dont have write permission on $DIR"
+        exit 1
+fi
+
+find "$DIR" -type f -exec chown "$USER" {} \;
+echo "ownership of all files in $DIR has been changed to $USER"
