@@ -1,0 +1,28 @@
+# Exercise
+
+1. Write a script that takes a filename as input and adds a prefix to it (e.g., "processed_").
+
+# Answer
+
+1. 
+#!/bin/bash
+
+add_prefix() {
+        local filename="$1"
+        local prefix="processed_"
+
+        local base_name=$(basename "$filename")
+        local extension="${basename##*.}"
+        local name="${base_name%.*}"
+
+        local new_filename="${prefix}${name}${extension}"
+
+        echo "$new_filename"
+}
+        if [ $# -eq 0 ]; then
+        echo "usage: $0 <filename>"
+        exit 1
+fi
+
+newfilename=$(add_prefix "$1")
+echo "new filenma: $new_filename"
