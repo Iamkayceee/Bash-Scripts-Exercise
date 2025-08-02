@@ -1,0 +1,58 @@
+## Exercises
+
+1. Write a script that prints the value of `PATH`, one directory per line.
+
+2. Create a script that sets a custom environment variable and then uses it in a meaningful way (e.g., to determine the output directory for log files).
+
+3. Write a script that checks if a specific environment variable exists, and if not, sets a default value.
+
+4. Create a script that lists all environment variables, sorts them alphabetically, and saves the output to a file.
+
+# Answers
+
+1. 
+#!/bin/bash
+
+IFS=':' read -ra PATH_ARRAY <<< "$PATH"
+for dir in "${PATH_ARRAY[@]}:; do
+        echo "$dir"
+done
+
+2. 
+#!/bin/bash
+
+export LOG_DIR="${HOME}/my_logs
+
+if [ ! -d "$LOG_DIR" ]; then
+echo "log directory does not exist, creating it..."
+mkdir -p "$LOG_DIR"
+
+LOG_FILE="$LOG_DIR/logfile.txt"
+
+echo "$(date + %Y-%m-%d%H:%M:%S') - log entry created" >> "$LOG_FILE"
+
+echo "log entry saved to: $LOG_FILE"
+
+3. 
+#!/bin/bash
+
+ENV_VAR_NAME="MY_VAR"
+
+DEFAULT_VALUE="default_value"
+
+if [ -z "${!ENV_VAR_NAME}"]; then
+
+export "$ENV_VAR_NAME=$DEFAULT_VALUE"
+echo "$ENV_VAR_NAME is not set. it has been set to the default value:$DEFAULT_VALUE"
+else
+echo "$ENV_VAR_NAME is already set to:${!ENV_VAR_NAME}"
+
+4. 
+#!/bin/bash
+
+OUTPUT_FILE="Sorted_env_vars.txt"
+
+printenv | Sort > "$OUTPUT_FILE"
+
+echo "environment variables have been sorted and saved to $OUTPUT_FILE"
+
