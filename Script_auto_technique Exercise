@@ -1,0 +1,57 @@
+## Exercises
+
+1. Create a cron job that runs a backup script every night at 2 AM.
+
+2. Write a script that uses the `at` command to schedule a system update for the next weekend.
+
+3. Create a script that automates the process of updating and upgrading system packages, and schedule it to run weekly using cron.
+
+# Answers
+
+1. 
+#!/bin/bash
+
+BACKUP_DIR="/home/kelechi/project"
+BACKUP_DEST="/home/kelechi/backup"
+BACKUP_FILE="backup_.tar.gz"
+LOG_FILE="/home/kelechi/backup.log"
+
+echo "$(date + %Y-%m-%d%H:%M:%S') - starting backup..." >> $LOG_FILE
+tar -czf "$BACKUP_DEST/$BACKUP_FILE" -c "$BACKUP_DIR" >> $LOG_FILE 2>&1
+
+if [ $? -eq 0 ]; then
+echo "$(date + %Y-%m-%d%H:%M:%S') - Backup successful: $BACKUPFILE" >> $LOGFILE
+else
+echo "$(date + %Y-%m-%d%H:%M:%S') - Backup failed" >> $LOG_FILE
+
+fi
+
+crontab -e
+0 2 * * * /path/to/script
+
+2. 
+#!/bin/bash
+
+next_saturday=$(date - d "next saturday" '+%Y-%m-%d')
+time="14:00"
+
+echo "sudo apt update" | at $time $next_saturday
+echo "system update scheduled for $next_saturday at $time"
+
+# NOTE: sudo visudo
+# your_username ALL=(ALL) NOPASSWD:
+# /usr/bin/apt update /usr/bin/apt upgrade
+
+3. 
+#!/bin/bash
+
+LOG_FILE="/var/log/system_update.log"
+
+DATE=$(date + %Y-%m-%d%H:%M:%S')
+
+echo "[$DATE] starting system update and upgrade..." >> $LOG_FILE
+echo "sudo apt update && sudo apt upgrade -y >> $LOG_FILE 2>&1
+echo "[$DATE] system update and upgrade completed" >> $LOG_FILE
+
+crontab -e
+0 2 * * SUN /path/to/script
