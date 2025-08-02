@@ -1,0 +1,261 @@
+#!/bin/bash
+
+LOG_FILE="/var/log/sysadmin_dashboard.log"
+BACKUP_DIR="/opt/sysadmin_backups"
+
+# Ensure backup directory exists
+mkdir -p "$BACKUP_DIR"
+
+log_action() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+}
+
+pause() {
+    read -rp "Press [Enter] to continue..."
+}
+
+# System Information
+system_info() {
+    echo "--- System Information ---"
+    echo "OS Version:"
+    cat /etc/os-release
+    echo
+    echo "CPU Info:"
+    lscpu | grep -E 'Model name|CPU\(s\):|Architecture'
+    echo
+    echo "Memory Usage:"
+    free -h
+    echo
+    echo "Disk Usage:"
+    df -h
+    log_action "Viewed system information"
+    pause
+}
+
+# User Management
+list_users() {
+    cut -d: -f1 /etc/passwd
+    log_action "Listed all users"
+    pause
+}
+
+add_user() {
+    read -rp "Enter username to add: " username
+    sudo adduser "$username"
+    log_action "Added user: $username"
+    pause
+}
+
+delete_user() {
+    read -rp "Enter username to delete: " username
+    sudo deluser "$username"
+    log_action "Deleted user: $username"
+    pause
+}
+
+modify_user() {
+    read -rp "Enter username to modify: " username
+    echo "1) Change password"
+    echo "2) Add to group"
+    read -rp "Choose option: " opt
+    case $opt in
+        1) sudo passwd "$username"; log_action "Changed password for $username";;
+        2) read -rp "Enter group to add: " group; sudo usermod -aG "$group" "$username"; log_action "Added $username to group $group";;
+        *) echo "Invalid option";;
+    esac
+    pause
+}
+
+# Process Management
+list_top_processes() {
+    ps -eo pid,comm,%cpu --sort=-%cpu | head -n 10
+    log_action "Listed top CPU-consuming processes"
+    pause
+}
+
+kill_process() {
+    read -rp "Enter PID or name of process to kill: " target
+    if [[ "$target" =~ ^[0-9]+$ ]]; then
+        sudo kill "$target"
+    else
+        pkill "$target"
+    fi
+    log_action "Killed process: $target"
+    pause
+}
+
+# Service Management
+list_services() {
+    systemctl list-units --type=service --all
+    log_action "Listed all services"
+    pause
+}
+
+manage_service() {
+    read -rp "Enter service name: " service
+    echo "1) Start"
+    echo "2) Stop"
+    echo "3) Restart"
+    read -rp "Choose option: " opt
+    case $opt in
+        1) sudo systemctl start "$service"; log_action "Started service: $service";;
+        2) sudo systemctl stop "$service"; log_action "Stopped service: $service";;
+        3) sudo systemctl restart "$service"; log_action "Restarted service: $service";;
+        *) echo "Invalid option";;
+    esac
+    pause
+}
+
+# Network Info
+ip_info() {
+    ip a
+    log_action "Displayed IP configuration"
+    pause
+}
+
+active_connections() {
+    ss -tunap
+    log_action "Displayed active network connections"
+    pause
+}
+
+# Log Analysis
+view_logs() {
+    sudo journalctl -n 50
+    log_action "Viewed recent system logs"
+    pause
+}
+
+search_logs() {
+    read -rp "Enter search pattern: " pattern
+    sudo journalctl | grep "$pattern"
+    log_action "Searched logs for pattern: $pattern"
+    pause
+}
+
+# Backup Utility
+create_backup() {
+    read -rp "Enter directory to backup: " dir
+    tar czf "$BACKUP_DIR/backup_$(date +%F_%T).tar.gz" "$dir"
+    log_action "Created backup for directory: $dir"
+    pause
+}
+
+restore_backup() {
+    ls "$BACKUP_DIR"
+    read -rp "Enter backup file to restore: " file
+    read -rp "Enter destination path: " dest
+    tar xzf "$BACKUP_DIR/$file" -C "$dest"
+    log_action "Restored backup $file to $dest"
+    pause
+}
+
+# System Update
+check_updates() {
+    sudo apt update
+    log_action "Checked for system updates"
+    pause
+}
+
+apply_updates() {
+    read -rp "Apply updates now? (y/n): " answer
+    if [[ "$answer" == "y" ]]; then
+        sudo apt upgrade -y
+        log_action "Applied system updates"
+    else
+        echo "Update cancelled."
+    fi
+    pause
+}
+
+# Main Menu
+main_menu() {
+    while true; do
+        clear
+        echo "--- System Administration Dashboard ---"
+        echo "1) System Information"
+        echo "2) User Management"
+        echo "3) Process Management"
+        echo "4) Service Management"
+        echo "5) Network Information"
+        echo "6) Log Analysis"
+        echo "7) Backup Utility"
+        echo "8) System Update"
+        echo "9) Exit"
+        read -rp "Choose an option: " choice
+        case $choice in
+            1) system_info;;
+            2)
+                echo "a) List Users"
+                echo "b) Add User"
+                echo "c) Delete User"
+                echo "d) Modify User"
+                read -rp "Choose a sub-option: " sub
+                case $sub in
+                    a) list_users;;
+                    b) add_user;;
+                    c) delete_user;;
+                    d) modify_user;;
+                    *) echo "Invalid sub-option"; pause;;
+                esac;;
+            3)
+                echo "a) List Top Processes"
+                echo "b) Kill Process"
+                read -rp "Choose a sub-option: " sub
+                case $sub in
+                    a) list_top_processes;;
+                    b) kill_process;;
+                    *) echo "Invalid sub-option"; pause;;
+                esac;;
+            4)
+                echo "a) List Services"
+                echo "b) Manage Service"
+                read -rp "Choose a sub-option: " sub
+                case $sub in
+                    a) list_services;;
+                    b) manage_service;;
+                    *) echo "Invalid sub-option"; pause;;
+                esac;;
+            5)
+                echo "a) IP Configuration"
+                echo "b) Active Connections"
+                read -rp "Choose a sub-option: " sub
+                case $sub in
+                    a) ip_info;;
+                    b) active_connections;;
+                    *) echo "Invalid sub-option"; pause;;
+                esac;;
+            6)
+                echo "a) View Logs"
+                echo "b) Search Logs"
+                read -rp "Choose a sub-option: " sub
+                case $sub in
+                    a) view_logs;;
+                    b) search_logs;;
+                    *) echo "Invalid sub-option"; pause;;
+                esac;;
+            7)
+                echo "a) Create Backup"
+                echo "b) Restore Backup"
+                read -rp "Choose a sub-option: " sub
+                case $sub in
+                    a) create_backup;;
+                    b) restore_backup;;
+                    *) echo "Invalid sub-option"; pause;;
+                esac;;
+            8)
+                echo "a) Check Updates"
+                echo "b) Apply Updates"
+                read -rp "Choose a sub-option: " sub
+                case $sub in
+                    a) check_updates;;
+                    b) apply_updates;;
+                    *) echo "Invalid sub-option"; pause;;
+                esac;;
+            9) log_action "Exited dashboard"; exit 0;;
+            *) echo "Invalid choice"; pause;;
+        esac
+    done
+}
+
+main_menu
