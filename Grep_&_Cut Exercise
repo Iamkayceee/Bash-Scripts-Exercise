@@ -1,0 +1,64 @@
+Exercises
+
+1. Write a script that uses grep to find all lines in a log file that contain "ERROR" and extract the timestamp using cut.
+
+2. Create a script that searches for phone numbers in a text file using grep with a regular expression, then uses cut to format the output.
+
+3. Create a script that uses grep to search for a specific pattern across multiple files, then uses cut to extract and display relevant information from the matching lines.
+
+Answers
+
+1.
+#!/bin/bash
+
+LOG_FILE="$1"
+
+if [ -z "LOG_FILE" ]; then
+	echo "usage: $0 <log_file>"
+	exit 1
+fi
+
+if [ ! -f "$LOG_FILE" ]; then
+	echo "log file not found: $LOG_FILE"
+	exit 1
+fi
+
+grep "ERROR" "$LOG_FILE | cut -d ' ' -f 1-2
+
+2.
+#!/bin/bash
+
+TEXT_FILE="$1"
+
+if [ -z "$TEXT_FILE" ]; then
+	echo "usage: $0 <text_file>"
+	exit 1
+fi
+
+if [ ! -f "$TEXT_FILE" ]; then
+	echo "file not found: $TEXT_FILE"
+	exit 1
+fi
+
+grep -op '\(?\d{3}\)?[-.\s]?\d{3}[-.\s]\d{4}'"$TEXT_FILE" | cut -d ' ' -f 1
+
+3.
+#!/bin/bash
+
+if [ $# -lt 2 ]; then
+	echo "usage: $0 <pattern> <file1> <file2>"
+	exit 1
+fi
+
+PATTERN="$1"
+shift
+for FILE in "$@"; do
+
+if [ ! -f "$FILE" ]; then
+	echo "file not found: $FILE"
+	continue
+fi
+
+echo "searching in file: $FILE"
+grep "$PATTERN" "$FILE" | cut -d ' ' -f 1,2,4
+done 
