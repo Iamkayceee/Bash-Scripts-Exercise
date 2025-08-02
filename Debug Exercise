@@ -1,0 +1,68 @@
+## Exercises
+
+1. Write a script with intentional errors, then use `set -x` to identify and fix the issues.
+
+2. Create a script that uses `trap` to catch and display error messages, including the line number where the error occurred.
+
+3. Write a script that includes debug echo statements, but only prints them when a DEBUG flag is set.
+
+# Answers
+
+1. 
+#!/bin/bash
+set -x
+
+user_name=whoami
+echo "user is $user_name"
+
+if [ -f "somefile.txt ]; then
+        echo "file exists"
+
+2. 
+#!/bin/bash
+trap 'echo "error occured at line $LINENO: $BASH_COMMAND; exit 1" ERR
+
+create_dir() {
+echo "attempting to create a directory"
+mkdir /root/protected.dir
+}
+
+read_file() {
+        echo "attempting to read a file"
+        cat non_existent_file.txt
+}
+
+}
+
+echo "starting script"
+read_file
+create_dir
+
+3. 
+#!/bin/bash
+DEBUG=1
+
+debug_echo() {
+        if [ "$DEBUG" -eq 1 ]; then
+        echo "[DEBUG] $1"
+fi
+}
+
+example_func() {
+        debug_echo "entering example_func"
+
+local x=5
+local y=10
+local sum=$((x+y))
+
+debug_echo "the value of x is $x"
+debug_echo "the value of y is $y"
+debug_echo "the sum of both is $sum"
+
+debug_echo "exiting example_func"
+}
+
+debug_echo "starting the script"
+example_func
+debug_echo "script finished"
+
